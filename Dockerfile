@@ -32,6 +32,9 @@ EXPOSE 8080
 # Copy .env file for local testing (Railway uses env vars)
 COPY .env* ./
 
-# Run the server using python module uvicorn to handle signal propagation correctly
-# Use sh -c to properly expand environment variables
-CMD ["sh", "-c", "uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Copy startup script
+COPY start.sh ./
+RUN chmod +x start.sh
+
+# Run the server using startup script
+CMD ["./start.sh"]
