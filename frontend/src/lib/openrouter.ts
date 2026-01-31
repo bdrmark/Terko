@@ -95,7 +95,7 @@ export async function generateVisualization(
       return { success: false, error: 'No stone reference provided' };
     }
 
-    const response = await fetch('http://localhost:8080/reconstruct', {
+    const response = await fetch('/reconstruct', {
       method: 'POST',
       body: formData,
     });
