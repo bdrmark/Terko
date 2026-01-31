@@ -29,5 +29,9 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 # Expose the port (Railway provides this via environment variable)
 EXPOSE 8080
 
+# Copy .env file for local testing (Railway uses env vars)
+COPY .env* ./
+
 # Run the server using python module uvicorn to handle signal propagation correctly
-CMD ["python", "-m", "uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Use shell form to allow environment variable substitution
+CMD uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8080}
