@@ -1,0 +1,13 @@
+.tmp/
+.env
+credentials.json
+token.json
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+.DS_Store
+frontend/node_modules/
+frontend/dist/
