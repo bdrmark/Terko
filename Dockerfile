@@ -33,5 +33,5 @@ EXPOSE 8080
 COPY .env* ./
 
 # Run the server using python module uvicorn to handle signal propagation correctly
-# Use shell form to allow environment variable substitution
-CMD uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8080}
+# Use sh -c to properly expand environment variables
+CMD ["sh", "-c", "uvicorn server.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
