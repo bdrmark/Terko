@@ -5,8 +5,9 @@ import os
 import requests
 from dotenv import load_dotenv
 
-# Load environment variables from .env
-load_dotenv()
+# Load environment variables from .env file if it exists (for local dev)
+# On Railway, environment variables are set directly and don't need .env file
+load_dotenv(verbose=False)
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 MODEL_ID = "google/gemini-3-pro-image-preview"
@@ -29,7 +30,9 @@ def encode_image(image_path):
 
 def generate_reconstruction(pavement_image_path, scene_image_path, output_dir=None):
     if not OPENROUTER_API_KEY:
-        print("Error: OPENROUTER_API_KEY not found in .env file.")
+        print("Error: OPENROUTER_API_KEY environment variable is not set.")
+        print("For Railway: Set it in the Variables tab of your Railway dashboard.")
+        print("For local dev: Add it to your .env file.")
         return None
 
     # Default to project root .tmp/generations if not specified
