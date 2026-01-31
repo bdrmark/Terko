@@ -30,7 +30,7 @@ Railway automatikusan használja a `railway.toml` file-t, de ha nem:
 
 **Start Command:**
 ```bash
-cd server && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+python -m uvicorn server.main:app --host 0.0.0.0 --port $PORT
 ```
 
 ### 4. Deploy

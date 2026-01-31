@@ -10,6 +10,6 @@ command = "pip install -r requirements.txt"
 command = "cd frontend && npm install && npm run build"
 
 [deploy]
-startCommand = "cd server && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+startCommand = "python -m uvicorn server.main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/health"
 restartPolicyType = "always"
