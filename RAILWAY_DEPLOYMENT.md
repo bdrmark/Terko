@@ -1,47 +1,92 @@
 # Railway Deployment Guide
 
-## Backend Deployment
+## Egyszerű Telepítés (Ajánlott) - Minden egy helyen
 
-1. Create a new Railway project for the backend
-2. Connect your GitHub repository
-3. Set the root directory to `/` (project root)
-4. Set the start command: `cd server && python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Add environment variables in Railway dashboard:
-   ```
-   OPENROUTER_API_KEY=your-api-key-here
-   PORT=8080
-   ```
-6. Deploy and note your backend URL (e.g., `https://your-backend.railway.app`)
+Ez az egyszerűbb módszer: a backend kiszolgálja a frontend-et is.
 
-## Frontend Deployment
+### 1. Railway Project létrehozása
 
-1. Create a new Railway project for the frontend
-2. Connect your GitHub repository
-3. Set the root directory to `/frontend`
-4. Add environment variable in Railway dashboard:
-   ```
-   VITE_API_URL=https://your-backend.railway.app
-   ```
-5. Set the build command: `npm run build`
-6. Set the start command: `npm run preview` or use a static hosting service
+1. Menj a [Railway.app](https://railway.app) oldalra
+2. "New Project" → "Deploy from GitHub repo"
+3. Válaszd ki a Terko repository-t
+4. Railway automatikusan észleli a projektet
 
-## Local Development
+### 2. Environment változók beállítása
 
-For local development, no environment variables needed:
-- Backend runs on `http://localhost:8080`
-- Frontend runs on `http://localhost:5173` with Vite proxy
-- The proxy automatically forwards `/reconstruct` requests to the backend
-
-## Environment Variables
-
-### Backend (.env in project root)
+Railway dashboard → Variables:
 ```
 OPENROUTER_API_KEY=your-api-key-here
+PORT=8080
 ```
 
-### Frontend (frontend/.env.local for local, Railway env vars for production)
-```
-VITE_API_URL=https://your-backend.railway.app
+### 3. Build és Deploy beállítások
+
+Railway automatikusan használja a `railway.toml` file-t, de ha nem:
+
+**Build Command:**
+```bash
+./build.sh
 ```
 
-Leave `VITE_API_URL` empty for local development.
+**Start Command:**
+```bash
+cd server && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+### 4. Deploy
+
+1. Push to GitHub → Railway automatikusan build-eli és deploy-olja
+2. Kapsz egy URL-t: `https://your-app.railway.app`
+3. Ez az egy URL szolgálja ki a frontend-et ÉS a backend API-t is!
+
+## Lokális fejlesztés
+
+### Backend indítása:
+```bash
+cd server
+source venv/bin/activate
+python main.py
+```
+
+### Frontend indítása:
+```bash
+cd frontend
+npm run dev
+```
+
+- Frontend: `http://localhost:5173` (Vite dev server)
+- Backend: `http://localhost:8080` (FastAPI)
+- A Vite proxy automatikusan továbbítja az API hívásokat
+
+## Hogyan működik?
+
+**Production (Railway):**
+```
+https://your-app.railway.app/          → Frontend (index.html)
+https://your-app.railway.app/reconstruct → Backend API
+https://your-app.railway.app/health     → Backend health check
+```
+
+**Development (Local):**
+```
+http://localhost:5173/           → Vite dev server
+http://localhost:5173/reconstruct → Vite proxy → http://localhost:8080/reconstruct
+http://localhost:8080/health     → FastAPI backend
+```
+
+## Alternatív: Külön Frontend és Backend (Komplikáltabb)
+
+Ha külön szeretnéd őket:
+
+### Backend:
+- Root directory: `/`
+- Start command: `cd server && python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
+- Env: `OPENROUTER_API_KEY`
+
+### Frontend:
+- Root directory: `/frontend`
+- Env: `VITE_API_URL=https://your-backend.railway.app`
+- Build: `npm run build`
+- Start: `npm run preview`
+
+De ez bonyolultabb és drágább (2 service helyett 1).

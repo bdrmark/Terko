@@ -39,6 +39,19 @@ async def read_index():
         return FileResponse(index_path)
     return {"message": f"Frontend not found at {FRONTEND_DIST}"}
 
+# Catch-all route for SPA (must be last)
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    # Don't intercept API routes
+    if full_path.startswith("reconstruct") or full_path.startswith("health"):
+        return {"error": "Not found"}
+
+    # Serve index.html for all other routes (SPA routing)
+    index_path = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": f"Frontend not found at {FRONTEND_DIST}"}
+
 @app.post("/reconstruct")
 async def reconstruct(
     image_a: UploadFile = File(None),
