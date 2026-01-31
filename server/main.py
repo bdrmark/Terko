@@ -8,7 +8,8 @@ import uuid
 import sys
 
 # Add parent directory to path to import the execution script
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 from execution.nano_banana_pro import generate_reconstruction
 
 app = FastAPI()
@@ -20,13 +21,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-UPLOAD_DIR = ".tmp/uploads"
+UPLOAD_DIR = os.path.join(BASE_DIR, ".tmp", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Mount the frontend dist directory
 # In production (Docker), the dist is in /app/frontend/dist
 # In local dev, it might be in ../frontend/dist
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIST = os.path.join(BASE_DIR, "frontend", "dist")
 
 if os.path.exists(FRONTEND_DIST):

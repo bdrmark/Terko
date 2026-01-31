@@ -27,10 +27,15 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-def generate_reconstruction(pavement_image_path, scene_image_path, output_dir=".tmp/generations"):
+def generate_reconstruction(pavement_image_path, scene_image_path, output_dir=None):
     if not OPENROUTER_API_KEY:
         print("Error: OPENROUTER_API_KEY not found in .env file.")
         return None
+
+    # Default to project root .tmp/generations if not specified
+    if output_dir is None:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        output_dir = os.path.join(base_dir, ".tmp", "generations")
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
